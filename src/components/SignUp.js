@@ -56,9 +56,14 @@ function SignUp() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignIn = (event) => {
+  const handleSignUp = (event) => {
     auth
       .createUserWithEmailAndPassword(email, password)
+      .then((authUser) => {
+        return authUser.user.updateProfile({
+          displayName: userName,
+        });
+      })
       .catch((error) => alert(error.message));
   };
   return (
@@ -84,9 +89,11 @@ function SignUp() {
             placeholder='Password'
             onChange={(e) => setPassword(e.target.value)}
           />
-          <SignUpButton type='submit' onClick={() => handleSignIn()}>
-            SignUp
-          </SignUpButton>
+          <Link to='/login'>
+            <SignUpButton type='submit' onClick={() => handleSignUp()}>
+              SignUp
+            </SignUpButton>
+          </Link>
           <Text>Already have an account</Text>
           <Link to='/login'>SignIn</Link>
         </SignupContainerBody>

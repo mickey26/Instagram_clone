@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { auth } from "./firebase";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+import landingReducer from "../reducers/landingReducer";
+import { signInAction } from "../actions/landingAction";
+import { connect } from "react-redux";
 
 const Div = styled.div`
   display: flex;
@@ -51,44 +54,67 @@ const SignUpButton = styled.div`
 const ImgBanner = styled.img``;
 const Text = styled.text``;
 
-function SignIn() {
+function SignIn(props) {
   const [email, setEmail] = useState("");
-  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [redir, setRedir] = useState(true);
 
   const handleSignIn = (event) => {
     auth
-      .createUserWithEmailAndPassword(email, password)
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        // console.log(userCredential.user.displayName, "userCredi");
+        localStorage.setItem(
+          "userName",
+          JSON.stringify(userCredential.user.displayName)
+        );
+        setRedir(false);
+      })
       .catch((error) => alert(error.message));
   };
-  return (
-    <Div>
-      <ImgBanner src='https://www.instagram.com/static/images/homepage/screenshot1.jpg/d6bf0c928b5a.jpg' />
-      <ContainerDiv>
-        <Head>
-          <ImgLogo
-            src='https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png'
-            alt='logo'
-          />
-        </Head>
-        <SignupContainerBody>
-          <Input
-            placeholder='Email'
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            placeholder='Password'
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <SignUpButton type='submit' onClick={() => handleSignIn()}>
-            SignIn
-          </SignUpButton>
-          <Text>Want to join magical world of InstaKilo</Text>
-          <Link to='/'>SignUp</Link>
-        </SignupContainerBody>
-      </ContainerDiv>
-    </Div>
-  );
+  console.log(props, "signedUser");
+
+  if (redir) {
+    return (
+      <Div>
+        <ImgBanner src='https://www.instagram.com/static/images/homepage/screenshot1.jpg/d6bf0c928b5a.jpg' />
+        <ContainerDiv>
+          <Head>
+            <ImgLogo
+              src='https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png'
+              alt='logo'
+            />
+          </Head>
+          <SignupContainerBody>
+            <Input
+              placeholder='Email'
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              placeholder='Password'
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+            <SignUpButton type='submit' onClick={() => handleSignIn()}>
+              SignIn
+            </SignUpButton>
+
+            <Text>Want to join magical world of InstaKilo</Text>
+            <Link to='/'>SignUp</Link>
+          </SignupContainerBody>
+        </ContainerDiv>
+      </Div>
+    );
+  } else {
+    return <Redirect to='/home' />;
+  }
 }
 
-export default SignIn;
+const mapStateToProps = (signInAction) => {
+  const { userId } = landingReducer;
+  return {
+    userId,
+  };
+};
+
+export default connect(mapStateToProps, { signInAction })(SignIn);
