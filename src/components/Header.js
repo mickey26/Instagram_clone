@@ -5,11 +5,15 @@ import { auth } from "./firebase";
 import { signOutAction } from "../actions/landingAction";
 import SignIn from "./SignIn";
 import { Redirect } from "react-router";
+import Avatar from "@material-ui/core/Avatar";
+
+// import { CgAddR } from "react-icons/cg";
 
 const Nav = styled.nav`
   height: 54px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   border-bottom: 1px solid grey;
   padding: 5px 20px;
 `;
@@ -17,9 +21,16 @@ const Img = styled.img`
   background-color: white;
 `;
 
+const Button = styled.button`
+  background: #fafafa;
+  border: 0;
+  cursor: pointer;
+`;
+
 function Header(props) {
   const [user, setUser] = useState("");
   const [redir, setRedir] = useState(true);
+
   const handleSignOut = () => {
     auth
       .signOut()
@@ -29,7 +40,7 @@ function Header(props) {
       })
       .catch((error) => {});
   };
-  
+
   useEffect(() => {
     setUser(localStorage.getItem("userName", JSON.stringify()));
     console.log(
@@ -45,7 +56,10 @@ function Header(props) {
           src='https://www.instagram.com/static/images/web/mobile_nav_type_logo.png/735145cfe0a4.png'
           alt='logo'
         />
-        <span onClick={() => handleSignOut()}>{user}</span>
+        <div style={{ display: "flex" }}>
+          <Avatar alt={user} />
+          <Button onClick={() => handleSignOut()}> SignOut</Button>
+        </div>
       </Nav>
     );
   } else {
