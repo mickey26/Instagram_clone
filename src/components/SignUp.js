@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { auth } from "./firebase";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 const Div = styled.div`
   display: flex;
@@ -55,8 +55,10 @@ function SignUp() {
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const [authU, setAuthU] = useState(false);
 
   const handleSignUp = (event) => {
+    setAuthU(true);
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((authUser) => {
@@ -64,8 +66,12 @@ function SignUp() {
           displayName: userName,
         });
       })
+
       .catch((error) => alert(error.message));
   };
+
+
+
   return (
     <Div>
       <ImgBanner src='https://www.instagram.com/static/images/homepage/screenshot1.jpg/d6bf0c928b5a.jpg' />
@@ -89,11 +95,12 @@ function SignUp() {
             placeholder='Password'
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Link to='/login'>
-            <SignUpButton type='submit' onClick={() => handleSignUp()}>
-              SignUp
-            </SignUpButton>
-          </Link>
+          {/* <Link to='/login'> */}
+          <SignUpButton type='submit' onClick={() => handleSignUp()}>
+            SignUp
+          </SignUpButton>
+          {/* </Link> */}
+          {authU ? <Text>Account Created</Text> : null}
           <Text>Already have an account</Text>
           <Link to='/login'>SignIn</Link>
         </SignupContainerBody>
