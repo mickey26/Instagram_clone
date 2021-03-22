@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 import { storage, db } from "./firebase";
+
+const ModelContainer = styled.div`
+  height: 40px;
+  border: 1px solid black;
+  padding: 15px 15px 5px 15px;
+  background: white;
+`;
+
+const InputFile = styled.input``;
+const InputField = styled.input`
+  padding: 4px;
+`;
+const Button = styled.button``;
 
 function ImageUploader() {
   const [caption, setCaption] = useState("");
@@ -36,7 +50,6 @@ function ImageUploader() {
           .child(image.name)
           .getDownloadURL()
           .then((url) => {
-            console.log(url, "imageUrl");
             db.collection("posts").add({
               // timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               caption: caption,
@@ -50,24 +63,18 @@ function ImageUploader() {
       }
     );
   };
-  console.log(image, "iamge");
 
   return (
-    <div
-      style={{
-        height: "40px",
-        border: "1px solid black",
-      }}
-    >
-      <input type='file' onChange={handleChange} />
-      <input
+    <ModelContainer>
+      <InputFile type='file' onChange={handleChange} />
+      <InputField
         type='text'
         placeholder='Enter caption'
         onChange={(event) => setCaption(event.target.value)}
         value={caption}
       />
-      <button onClick={() => uploadHandle()}>Upload</button>
-    </div>
+      <Button onClick={() => uploadHandle()}>Upload</Button>
+    </ModelContainer>
   );
 }
 
